@@ -1,4 +1,3 @@
-import datetime
 import hashlib
 import json
 import os
@@ -6,6 +5,7 @@ import sys
 import urllib.error
 import urllib.parse
 import urllib.request
+from datetime import datetime
 from enum import Enum, IntEnum
 
 USER_AGENT = "APOLLO/1.1.43 (com.mayohr.tube; build:1; iOS 16.1.1) Alamofire/1.1.43"
@@ -29,7 +29,7 @@ def magic_hash(method: str, path: str, epoch: int, srv_loc: ServiceLocation):
 
 
 def get_token_info(company_code: str, employee_no: str, password: str):
-    now = int(datetime.datetime.now().timestamp())
+    now = int(datetime.now().timestamp())
     hash_val = magic_hash("POST", "/token", now, ServiceLocation.GLOBAL)
     user_name = f"{company_code}-{employee_no}"
     qs = urllib.parse.urlencode({"time": f"{now}", "hash": hash_val, "_sd": "HRM"})
@@ -116,17 +116,11 @@ def punch(
         return json.load(resp)
 
 
-def main():
+if __name__ == "__main__":
     company_code = os.getenv("COMPANY_CODE")
     employee_no = os.getenv("EMPLOYEE_NO")
     password = os.getenv("PASSWORD")
     punch_type = PunchType[sys.argv[1].upper()]
-    try:
-        checkin_location = sys.argv[2].upper()
-    except IndexError:
-        checkin_location = "其他"
+    location = sys.argv[2].upper()
 
-    print(punch(company_code, employee_no, password, punch_type, checkin_location))
-
-
-main()
+    print(punch(company_code, employee_no, password, punch_type, location))
