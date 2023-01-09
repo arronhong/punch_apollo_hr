@@ -1,5 +1,9 @@
+locals {
+  name = "punch_apollo_hr"
+}
+
 resource "aws_iam_role" "punch_apollo_hr" {
-  name = "punch_apollo_hr_role"
+  name = local.name
   assume_role_policy = jsonencode(
     {
       Statement = [
@@ -44,18 +48,18 @@ resource "aws_iam_role_policy_attachment" "punch_apollo_hr_role_policy_attachmen
 data "archive_file" "lambda_punch_apollo_hr_zip" {
   type        = "zip"
   source_dir  = "${path.module}/../src"
-  output_path = "punch_apollo_hr.zip"
+  output_path = "${local.name}.zip"
 }
 
 resource "aws_lambda_function" "punch_apollo_hr" {
-  function_name = "punch_apollo_hr"
+  function_name = local.name
   role          = aws_iam_role.punch_apollo_hr.arn
   architectures = ["arm64"]
   handler       = "lambda_handler.lambda_handler"
   runtime       = "python3.9"
   memory_size   = "128"
 
-  filename         = "punch_apollo_hr.zip"
+  filename         = "${local.name}.zip"
   source_code_hash = data.archive_file.lambda_punch_apollo_hr_zip.output_base64sha256
   publish          = false
   environment {
@@ -106,7 +110,7 @@ resource "aws_lambda_permission" "allow_cloudwatch_punch_out" {
 }
 
 resource "aws_cloudwatch_log_group" "punch_apollo_hr" {
-  name              = "/aws/lambda/punch_apollo_hr"
+  name              = "/aws/lambda/${local.name}"
   retention_in_days = 3
   skip_destroy      = false
 }
