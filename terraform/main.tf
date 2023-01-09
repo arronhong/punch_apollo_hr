@@ -1,11 +1,11 @@
 terraform {
   required_version = ">= 1.1.7"
 
-  #   backend "s3" {
-  #     bucket = "punch-apollo-hr"
-  #     key    = "terraform.tfstate"
-  #     region = "ap-northeast-1"
-  #   }
+  backend "s3" {
+    bucket = "punch-apollo-hr"
+    key    = "terraform.tfstate"
+    region = "ap-northeast-1"
+  }
 
   required_providers {
     aws = {
