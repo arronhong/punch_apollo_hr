@@ -104,3 +104,9 @@ resource "aws_lambda_permission" "allow_cloudwatch_punch_out" {
   source_arn    = aws_cloudwatch_event_rule.weekdays_punch_out.arn
   principal     = "events.amazonaws.com"
 }
+
+resource "aws_cloudwatch_log_group" "punch_apollo_hr" {
+  name              = "/aws/lambda/punch_apollo_hr"
+  retention_in_days = 3
+  skip_destroy      = false
+}
