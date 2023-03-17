@@ -86,11 +86,21 @@ resource "aws_cloudwatch_event_rule" "weekdays_punch_out" {
 resource "aws_cloudwatch_event_target" "punch_in_target" {
   rule = aws_cloudwatch_event_rule.weekdays_punch_in.name
   arn  = aws_lambda_function.punch_apollo_hr.arn
+  input = jsonencode(
+    {
+      action = "punch_in"
+    }
+  )
 }
 
 resource "aws_cloudwatch_event_target" "punch_out_target" {
   rule = aws_cloudwatch_event_rule.weekdays_punch_out.name
   arn  = aws_lambda_function.punch_apollo_hr.arn
+  input = jsonencode(
+    {
+      action = "punch_out"
+    }
+  )
 }
 
 resource "aws_lambda_permission" "allow_cloudwatch_punch_in" {
